@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BManage</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' ry='6' fill='%23facc15'/%3E%3Cpolygon points='12 4 4 8.5 12 13 20 8.5 12 4' fill='%230f172a'/%3E%3Cpolyline points='4 15.5 12 20 20 15.5' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpolyline points='4 11.5 12 16 20 11.5' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
@@ -21,7 +22,7 @@
    <!-- Login Modal Overlay -->
    <div id="login-overlay" class="fixed inset-0 z-50 flex items-center justify-center" style="background: linear-gradient(135deg, #b8f0c8 0%, #fef9c3 100%);">
     <div class="modal-shadow rounded-2xl p-10 w-full max-w-sm" style="background: #ffffff;">
-     <h2 class="text-2xl font-800 text-gray-800 mb-1 text-center" id="login-title">BManage</h2>
+     <h2 class="text-2xl font-800 text-gray-800 mb-1 text-center" id="login-title"><span class="inline-flex items-center gap-3 justify-center"><div class="w-10 h-10 bg-yellow-400 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layers" class="lucide lucide-layers w-6 h-6 text-gray-900"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg></div><span>BManage</span></span></h2>
      <p class="text-sm text-gray-400 mb-8 text-center">Sign in to your dashboard</p>
      <div id="login-tab-btns" class="flex mb-6 rounded-xl overflow-hidden" style="background: #f3f4f6;">
       <button onclick="switchTab('login')" id="tab-login" class="flex-1 py-2.5 text-sm font-600 rounded-xl transition-all" style="background:#facc15;color:#1f2937;">Login</button> <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-2.5 text-sm font-600 rounded-xl transition-all text-gray-500">Register</button>
@@ -35,7 +36,7 @@
     </div>
    </div><!-- Sidebar -->
    <aside id="sidebar" class="hidden w-64 h-full flex-shrink-0 flex flex-col py-8 px-5" style="background: #b8f0c8;">
-    <h1 id="sidebar-title" class="text-xl font-800 text-gray-800 mb-10 px-3">BManage</h1>
+    <h1 id="sidebar-title" class="text-xl font-800 text-gray-800 mb-10 px-3"><span class="inline-flex items-center gap-3"><div class="w-10 h-10 bg-yellow-400 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layers" class="lucide lucide-layers w-6 h-6 text-gray-900"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg></div><span>BManage</span></span></h1>
     <nav class="flex flex-col gap-1">
      <button onclick="switchPage('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-800 transition" style="background:rgba(255,255,255,0.5);"> <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard </button> <button onclick="switchPage('transactions')" id="nav-transactions" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-600 transition hover:bg-white/30"> <i data-lucide="receipt" style="width:18px;height:18px;"></i> Transactions </button> <button onclick="switchPage('products')" id="nav-products" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-600 transition hover:bg-white/30"> <i data-lucide="package" style="width:18px;height:18px;"></i> Products </button> <button onclick="switchPage('orders')" id="nav-orders" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-600 transition hover:bg-white/30"> <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i> Orders </button> <button onclick="switchPage('customers')" id="nav-customers" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-600 transition hover:bg-white/30"> <i data-lucide="users" style="width:18px;height:18px;"></i> Customers </button>
     </nav>
