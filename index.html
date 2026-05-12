@@ -193,20 +193,41 @@
             <input type="text" id="product-name" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="Enter product name">
           </div>
           <div>
+            <label class="text-xs font-600 text-gray-500 mb-1 block">Product Type</label>
+            <select id="product-type" onchange="toggleProductTypeFields()" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition">
+              <option value="plan">Plan</option>
+              <option value="item">Item</option>
+            </select>
+          </div>
+          <div>
             <label class="text-xs font-600 text-gray-500 mb-1 block">Price (₱)</label>
             <input type="number" id="product-price" min="0" step="0.01" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="0.00">
           </div>
-          <div>
-            <label class="text-xs font-600 text-gray-500 mb-1 block">Subscribers</label>
-            <input type="number" id="product-subscribers" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="0">
+          <div id="product-plan-fields">
+            <div>
+              <label class="text-xs font-600 text-gray-500 mb-1 block">Subscribers</label>
+              <input type="number" id="product-subscribers" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="0">
+            </div>
+            <div>
+              <label class="text-xs font-600 text-gray-500 mb-1 block">Benefit Subtitle</label>
+              <input type="text" id="product-benefit-edit-subtitle" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="Enter benefit subtitle">
+            </div>
+            <div>
+              <label class="text-xs font-600 text-gray-500 mb-1 block">Benefits</label>
+              <textarea id="product-benefit-edit-list" rows="4" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="One benefit per line"></textarea>
+            </div>
           </div>
-          <div>
-            <label class="text-xs font-600 text-gray-500 mb-1 block">Benefit Subtitle</label>
-            <input type="text" id="product-benefit-edit-subtitle" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="Enter benefit subtitle">
-          </div>
-          <div>
-            <label class="text-xs font-600 text-gray-500 mb-1 block">Benefits</label>
-            <textarea id="product-benefit-edit-list" rows="4" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="One benefit per line"></textarea>
+          <div id="product-item-fields" class="hidden">
+            <div>
+              <label class="text-xs font-600 text-gray-500 mb-1 block">Item Image</label>
+              <input type="file" id="product-image-upload" accept="image/*" class="w-full text-sm text-gray-700" onchange="previewProductImage()">
+            </div>
+            <div id="product-image-preview-container" class="hidden mt-3">
+              <label class="text-xs font-600 text-gray-500 mb-1 block">Preview</label>
+              <div class="h-32 w-full rounded-2xl overflow-hidden border border-gray-200 bg-slate-100 flex items-center justify-center">
+                <img id="product-image-preview" src="" alt="Item image preview" class="h-full w-full object-cover">
+              </div>
+            </div>
           </div>
           <div>
             <label class="text-xs font-600 text-gray-500 mb-1 block">Color Theme</label>
@@ -349,6 +370,7 @@
     const initialProducts = [
       {
         id: 'premium',
+        type: 'plan',
         name: 'Premium Plan',
         price: 299,
         subscribers: 142,
@@ -360,6 +382,7 @@
       },
       {
         id: 'starter',
+        type: 'plan',
         name: 'Starter Kit',
         price: 49,
         subscribers: 389,
@@ -371,6 +394,7 @@
       },
       {
         id: 'pro',
+        type: 'plan',
         name: 'Pro Bundle',
         price: 189,
         subscribers: 67,
@@ -634,11 +658,14 @@
       const product = products.find(p => p.id === productKey);
       const data = productBenefitData[productKey];
 
-      const benefitSubtitle = product?.benefitSubtitle || data?.subtitle || `₱${product?.price}/month • ${product?.subscribers} subscribers`;
-      const benefitList = product?.benefitList || data?.list || [
+      const benefitSubtitle = product?.benefitSubtitle || data?.subtitle || (product?.type === 'item' ? `One-time purchase • ₱${product?.price}` : `₱${product?.price}/month • ${product?.subscribers} subscribers`);
+      const benefitList = product?.benefitList || data?.list || (product?.type === 'item' ? [
+        `One-time purchase at ₱${product?.price}.`,
+        'Perfect for single-use purchase workflows.'
+      ] : [
         `Custom product with ${product?.subscribers} active subscribers`,
         `Priced at ₱${product?.price} per month`
-      ];
+      ]);
 
       document.getElementById('product-benefit-title').textContent = product?.name || data?.title || '';
       document.getElementById('product-benefit-subtitle').textContent = benefitSubtitle;
@@ -671,11 +698,15 @@
 
       container.innerHTML = products.map(product => {
         const isOriginal = originalProductIds.includes(product.id);
+        const backgroundStyle = product.type === 'item' && product.image
+          ? `background-image:url('${product.image}');background-size:cover;background-position:center;`
+          : `background:${product.gradient};`;
+
         return `
         <div class="product-card card-shadow rounded-2xl p-5 bg-white cursor-pointer border border-transparent transition transform duration-300 hover:-translate-y-1 hover:shadow-xl ${product.borderColor}" onclick="showProductBenefit('${product.id}', this)">
-          <div class="w-full h-24 rounded-xl mb-4" style="background:${product.gradient};"></div>
+          <div class="w-full h-24 rounded-xl mb-4 overflow-hidden" style="${backgroundStyle}"></div>
           <h4 class="font-700 text-gray-800">${product.name}</h4>
-          <p class="text-xs text-gray-400 mt-1">₱${product.price}/mo • ${product.subscribers} subscribers</p>
+          <p class="text-xs text-gray-400 mt-1">${product.type === 'item' ? `₱${product.price} • One-time item` : `₱${product.price}/mo • ${product.subscribers} subscribers`}</p>
           <div class="flex gap-2 mt-3 opacity-0 hover:opacity-100 transition-opacity">
             <button onclick="event.stopPropagation(); showEditProductModal('${product.id}')" class="flex-1 py-1 px-2 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition">
               Edit
@@ -692,11 +723,16 @@
     function showAddProductModal() {
       document.getElementById('product-modal-title').textContent = 'Add New Product';
       document.getElementById('product-name').value = '';
+      document.getElementById('product-type').value = 'plan';
       document.getElementById('product-price').value = '';
       document.getElementById('product-subscribers').value = '';
       document.getElementById('product-benefit-edit-subtitle').value = '';
       document.getElementById('product-benefit-edit-list').value = '';
       document.getElementById('product-color').value = 'yellow';
+      document.getElementById('product-image-upload').value = '';
+      document.getElementById('product-image-preview').src = '';
+      document.getElementById('product-image-preview-container').classList.add('hidden');
+      toggleProductTypeFields();
       document.getElementById('product-modal').classList.remove('hidden');
     }
 
@@ -706,66 +742,98 @@
 
       document.getElementById('product-modal-title').textContent = 'Edit Product';
       document.getElementById('product-name').value = product.name;
+      document.getElementById('product-type').value = product.type || 'plan';
       document.getElementById('product-price').value = product.price;
       document.getElementById('product-subscribers').value = product.subscribers;
       document.getElementById('product-benefit-edit-subtitle').value = product.benefitSubtitle || '';
       document.getElementById('product-benefit-edit-list').value = (product.benefitList || []).join('\n');
       document.getElementById('product-color').value = product.color;
+      document.getElementById('product-image-upload').value = '';
+      if (product.type === 'item' && product.image) {
+        document.getElementById('product-image-preview').src = product.image;
+        document.getElementById('product-image-preview-container').classList.remove('hidden');
+      } else {
+        document.getElementById('product-image-preview').src = '';
+        document.getElementById('product-image-preview-container').classList.add('hidden');
+      }
+      toggleProductTypeFields();
       document.getElementById('product-modal').dataset.editingId = productId;
       document.getElementById('product-modal').classList.remove('hidden');
     }
 
     function saveProduct() {
       const name = document.getElementById('product-name').value.trim();
+      const type = document.getElementById('product-type').value;
       const price = parseFloat(document.getElementById('product-price').value);
       const subscribers = parseInt(document.getElementById('product-subscribers').value);
       const color = document.getElementById('product-color').value;
+      const imageInput = document.getElementById('product-image-upload');
 
-      if (!name || isNaN(price) || isNaN(subscribers)) {
-        alert('Please fill in all fields correctly');
-        return;
-      }
-
-      const editingId = document.getElementById('product-modal').dataset.editingId;
       const benefitSubtitle = document.getElementById('product-benefit-edit-subtitle').value.trim();
       const benefitList = document.getElementById('product-benefit-edit-list').value
         .split('\n')
         .map(line => line.trim())
         .filter(line => line.length > 0);
 
-      if (editingId) {
-        // Edit existing product
-        const product = products.find(p => p.id === editingId);
-        if (product) {
-          product.name = name;
-          product.price = price;
-          product.subscribers = subscribers;
-          product.color = color;
-          product.benefitSubtitle = benefitSubtitle;
-          product.benefitList = benefitList;
-          updateProductGradients(product);
-        }
-        delete document.getElementById('product-modal').dataset.editingId;
-      } else {
-        // Add new product
-        const newProduct = {
-          id: Date.now().toString(),
-          name,
-          price,
-          subscribers,
-          color,
-          gradient: '',
-          borderColor: `hover:border-${color}-300`,
-          benefitSubtitle,
-          benefitList
-        };
-        updateProductGradients(newProduct);
-        products.push(newProduct);
+      if (!name || isNaN(price)) {
+        alert('Please fill in all required fields correctly');
+        return;
       }
 
-      renderProducts();
-      updateProductSelect();
-      hideProductModal();
+      if (type === 'plan' && isNaN(subscribers)) {
+        alert('Please enter a valid subscriber count for plan products');
+        return;
+      }
+
+      const editingId = document.getElementById('product-modal').dataset.editingId;
+      const productData = {
+        name,
+        type,
+        price,
+        subscribers: type === 'plan' ? subscribers : 0,
+        color,
+        benefitSubtitle: type === 'plan' ? benefitSubtitle : '',
+        benefitList: type === 'plan' ? benefitList : [],
+        image: undefined
+      };
+
+      function saveProductData(imageData) {
+        if (type === 'item') {
+          productData.image = imageData || (editingId ? products.find(p => p.id === editingId)?.image : undefined);
+        }
+
+        if (editingId) {
+          const product = products.find(p => p.id === editingId);
+          if (product) {
+            Object.assign(product, productData);
+            updateProductGradients(product);
+          }
+          delete document.getElementById('product-modal').dataset.editingId;
+        } else {
+          const newProduct = {
+            id: Date.now().toString(),
+            ...productData,
+            gradient: '',
+            borderColor: `hover:border-${color}-300`
+          };
+          updateProductGradients(newProduct);
+          products.push(newProduct);
+        }
+
+        renderProducts();
+        updateProductSelect();
+        hideProductModal();
+      }
+
+      if (type === 'item' && imageInput.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          saveProductData(event.target.result);
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+      } else {
+        saveProductData();
+      }
     }
 
     function updateProductGradients(product) {
@@ -778,6 +846,39 @@
         indigo: 'linear-gradient(135deg,#eef2ff,#c7d2fe)'
       };
       product.gradient = gradients[product.color] || gradients.yellow;
+    }
+
+    function toggleProductTypeFields() {
+      const type = document.getElementById('product-type').value;
+      const planFields = document.getElementById('product-plan-fields');
+      const itemFields = document.getElementById('product-item-fields');
+      if (type === 'item') {
+        planFields.classList.add('hidden');
+        itemFields.classList.remove('hidden');
+      } else {
+        planFields.classList.remove('hidden');
+        itemFields.classList.add('hidden');
+      }
+    }
+
+    function previewProductImage() {
+      const input = document.getElementById('product-image-upload');
+      const preview = document.getElementById('product-image-preview');
+      const container = document.getElementById('product-image-preview-container');
+
+      if (input.files.length === 0) {
+        preview.src = '';
+        container.classList.add('hidden');
+        return;
+      }
+
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        preview.src = event.target.result;
+        container.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
     }
 
     function deleteProduct(productId) {
