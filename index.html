@@ -58,28 +58,28 @@
      <h2 class="text-2xl font-800 text-gray-800 mb-1">Dashboard</h2>
      <p class="text-sm text-gray-400 mb-8">Welcome back! Here's your business overview.</p>
      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-      <div class="card-shadow rounded-2xl p-6 bg-white">
+      <div class="card-shadow rounded-2xl p-6 bg-white transform transition duration-300 hover:-translate-y-1 hover:shadow-xl">
        <div class="flex items-center gap-2 mb-3">
         <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:#fef08a;"><i data-lucide="dollar-sign" style="width:18px;height:18px;color:#a16207;"></i>
         </div><span class="text-xs font-600 text-gray-400">Total Revenue</span>
        </div>
        <p id="metric-revenue" class="text-2xl font-800 text-gray-800">₱124,500</p><span class="text-xs text-green-500 font-600">↑ 12.5% from last month</span>
       </div>
-      <div class="card-shadow rounded-2xl p-6 bg-white">
+      <div class="card-shadow rounded-2xl p-6 bg-white transform transition duration-300 hover:-translate-y-1 hover:shadow-xl">
        <div class="flex items-center gap-2 mb-3">
         <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:#d1fae5;"><i data-lucide="repeat" style="width:18px;height:18px;color:#065f46;"></i>
         </div><span class="text-xs font-600 text-gray-400">Transactions</span>
        </div>
        <p id="metric-transactions" class="text-2xl font-800 text-gray-800">1,248</p><span class="text-xs text-green-500 font-600">↑ 8.2% from last month</span>
       </div>
-      <div class="card-shadow rounded-2xl p-6 bg-white">
+      <div class="card-shadow rounded-2xl p-6 bg-white transform transition duration-300 hover:-translate-y-1 hover:shadow-xl">
        <div class="flex items-center gap-2 mb-3">
         <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:#e0f2fe;"><i data-lucide="package" style="width:18px;height:18px;color:#0369a1;"></i>
         </div><span class="text-xs font-600 text-gray-400">Active Products</span>
        </div>
        <p id="metric-products" class="text-2xl font-800 text-gray-800">56</p><span class="text-xs text-gray-400 font-600">+3 this week</span>
       </div>
-      <div class="card-shadow rounded-2xl p-6 bg-white">
+      <div class="card-shadow rounded-2xl p-6 bg-white transform transition duration-300 hover:-translate-y-1 hover:shadow-xl">
        <div class="flex items-center gap-2 mb-3">
         <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:#fce7f3;"><i data-lucide="users" style="width:18px;height:18px;color:#9d174d;"></i>
         </div><span class="text-xs font-600 text-gray-400">Total Customers</span>
@@ -87,7 +87,7 @@
        <p id="metric-customers" class="text-2xl font-800 text-gray-800">892</p><span class="text-xs text-green-500 font-600">↑ 4.1% from last month</span>
       </div>
      </div><!-- Mini chart area -->
-     <div class="card-shadow rounded-2xl p-6 bg-white">
+     <div class="card-shadow rounded-2xl p-6 bg-white transform transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <h3 class="text-sm font-700 text-gray-700 mb-4">Revenue Trend (Last 7 days)</h3>
       <div class="flex items-end gap-3 h-32">
        <div class="flex-1 rounded-lg" style="background:#facc15;height:60%;"></div>
@@ -117,7 +117,7 @@
          <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Date</th>
         </tr>
        </thead>
-       <tbody class="text-gray-700">
+       <tbody id="transactions-history" class="text-gray-700">
         <tr class="border-t border-gray-100">
          <td class="px-6 py-4 font-500">#C001</td>
          <td class="px-6 py-4">Sarah Johnson</td>
@@ -161,23 +161,37 @@
      <h2 class="text-2xl font-800 text-gray-800 mb-1">Products</h2>
      <p class="text-sm text-gray-400 mb-6">Manage your product catalog</p>
      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="card-shadow rounded-2xl p-5 bg-white">
+      <div class="product-card card-shadow rounded-2xl p-5 bg-white cursor-pointer border border-transparent transition transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-yellow-300" onclick="showProductBenefit('premium', this)">
        <div class="w-full h-24 rounded-xl mb-4" style="background:linear-gradient(135deg,#fef08a,#facc15);"></div>
        <h4 class="font-700 text-gray-800">Premium Plan</h4>
        <p class="text-xs text-gray-400 mt-1">₱299/mo • 142 subscribers</p>
       </div>
-      <div class="card-shadow rounded-2xl p-5 bg-white">
+      <div class="product-card card-shadow rounded-2xl p-5 bg-white cursor-pointer border border-transparent transition transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-emerald-300" onclick="showProductBenefit('starter', this)">
        <div class="w-full h-24 rounded-xl mb-4" style="background:linear-gradient(135deg,#d1fae5,#6ee7b7);"></div>
        <h4 class="font-700 text-gray-800">Starter Kit</h4>
        <p class="text-xs text-gray-400 mt-1">₱49/mo • 389 subscribers</p>
       </div>
-      <div class="card-shadow rounded-2xl p-5 bg-white">
+      <div class="product-card card-shadow rounded-2xl p-5 bg-white cursor-pointer border border-transparent transition transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-sky-300" onclick="showProductBenefit('pro', this)">
        <div class="w-full h-24 rounded-xl mb-4" style="background:linear-gradient(135deg,#e0f2fe,#7dd3fc);"></div>
        <h4 class="font-700 text-gray-800">Pro Bundle</h4>
        <p class="text-xs text-gray-400 mt-1">₱189/mo • 67 subscribers</p>
       </div>
      </div>
     </div><!-- Customers Page -->
+
+    <div id="product-benefit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4 py-6" onclick="hideProductBenefit()">
+      <div class="w-full max-w-lg rounded-[40px] bg-white p-8 shadow-[0_30px_90px_rgba(0,0,0,0.15)]" onclick="event.stopPropagation()">
+        <div class="flex items-start gap-4 mb-4">
+          <div id="benefit-icon" class="h-14 w-14 rounded-3xl flex items-center justify-center bg-yellow-100 text-yellow-700 text-2xl"></div>
+          <div>
+            <h3 id="product-benefit-title" class="text-2xl font-800 text-gray-900 mb-2"></h3>
+            <p id="product-benefit-subtitle" class="text-sm text-gray-500"></p>
+          </div>
+        </div>
+        <ul id="product-benefit-list" class="space-y-3 mb-6 text-gray-600"></ul>
+        <button onclick="hideProductBenefit()" class="w-full rounded-2xl bg-slate-950 px-5 py-4 text-sm font-700 text-white transition hover:bg-slate-800">Got it</button>
+      </div>
+    </div>
     <div id="page-customers" class="hidden">
      <h2 class="text-2xl font-800 text-gray-800 mb-1">Customers</h2>
      <p class="text-sm text-gray-400 mb-6">Your customer base</p>
@@ -224,7 +238,7 @@
         <div class="space-y-4">
          <div><label class="text-xs font-600 text-gray-500 mb-1 block">Customer</label> <select id="order-customer" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition"> <option value="">Select Customer</option> <option value="Sarah Johnson">Sarah Johnson</option> <option value="Mike Chen">Mike Chen</option> <option value="Emma Wilson">Emma Wilson</option> </select>
          </div>
-         <div><label class="text-xs font-600 text-gray-500 mb-1 block">Product</label> <select id="order-product" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition"> <option value="">Select Product</option> <option value="Premium Plan">Premium Plan - ₱299</option> <option value="Starter Kit">Starter Kit - ₱49</option> <option value="Pro Bundle">Pro Bundle - ₱189</option> <option value="Basic Plan">Basic Plan - ₱19</option> </select>
+         <div><label class="text-xs font-600 text-gray-500 mb-1 block">Product</label> <select id="order-product" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition"> <option value="">Select Product</option> <option value="Premium Plan - ₱299">Premium Plan - ₱299</option> <option value="Starter Kit - ₱49">Starter Kit - ₱49</option> <option value="Pro Bundle - ₱189">Pro Bundle - ₱189</option> <option value="Basic Plan - ₱19">Basic Plan - ₱19</option> </select>
          </div>
          <div><label class="text-xs font-600 text-gray-500 mb-1 block">Quantity</label> <input type="number" id="order-quantity" min="1" value="1" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition">
          </div><button onclick="addOrderItem()" class="w-full py-3 rounded-xl font-600 text-gray-900 text-sm transition hover:brightness-95" style="background:#facc15;">Add to Order</button>
@@ -295,6 +309,44 @@
 
     let orderItems = [];
     let orderCounter = 1;
+    let transactionCount = 1248;
+    let totalRevenue = 124500;
+
+    const productBenefitData = {
+      premium: {
+        title: 'Premium Plan',
+        subtitle: 'Unlock full control over your business workflows.',
+        icon: '<i data-lucide="crown"></i>',
+        iconBg: 'bg-yellow-100 text-yellow-700',
+        list: [
+          'Priority 24/7 technical support.',
+          'Advanced data analytics dashboard.',
+          'Custom reporting and premium onboarding.'
+        ]
+      },
+      starter: {
+        title: 'Starter Kit',
+        subtitle: 'A smooth launch package for new users.',
+        icon: '<i data-lucide="rocket"></i>',
+        iconBg: 'bg-emerald-100 text-emerald-700',
+        list: [
+          'Easy setup with guided onboarding.',
+          'Reliable support for early growth.',
+          'Simple tools to get started quickly.'
+        ]
+      },
+      pro: {
+        title: 'Pro Bundle',
+        subtitle: 'Grow faster with team-ready workflows.',
+        icon: '<i data-lucide="layers"></i>',
+        iconBg: 'bg-sky-100 text-sky-700',
+        list: [
+          'Premium features for teams.',
+          'Custom workflows and collaboration.',
+          'Dedicated optimization for scaling.'
+        ]
+      }
+    };
 
     function applyConfig(config) {
       document.getElementById('sidebar-title').textContent = config.app_title || defaultConfig.app_title;
@@ -392,16 +444,25 @@
 
     function addOrderItem() {
       const customer = document.getElementById('order-customer').value;
-      const product = document.getElementById('order-product').value;
+      const productField = document.getElementById('order-product').value;
       const quantity = parseInt(document.getElementById('order-quantity').value) || 1;
 
-      if (!customer || !product) {
+      if (!customer || !productField) {
         alert('Please select customer and product');
         return;
       }
 
-      const price = parseFloat(product.match(/\$(\d+)/)[1]);
-      const item = { id: Date.now(), customer, product, quantity, price: price * quantity };
+      const priceMap = {
+        'Premium Plan': 299,
+        'Starter Kit': 49,
+        'Pro Bundle': 189,
+        'Basic Plan': 19
+      };
+
+      const [productName, priceText] = productField.split(' - ');
+      const product = productName.trim();
+      const basePrice = priceText ? parseFloat(priceText.replace(/[^\d.]/g, '')) : priceMap[product] || 0;
+      const item = { id: Date.now(), customer, product, quantity, price: basePrice * quantity };
       orderItems.push(item);
       renderOrderItems();
       document.getElementById('order-customer').value = '';
@@ -426,7 +487,7 @@
               <p class="text-xs text-gray-400">Qty: ${item.quantity} | ${item.customer}</p>
             </div>
             <div class="text-right">
-              <p class="text-sm font-600 text-gray-800">$${item.price.toFixed(2)}</p>
+              <p class="text-sm font-600 text-gray-800">₱${item.price.toFixed(2)}</p>
               <button onclick="removeOrderItem(${item.id})" class="text-xs text-red-500 hover:text-red-700 mt-1">Remove</button>
             </div>
           </div>
@@ -440,9 +501,9 @@
       const tax = subtotal * 0.1;
       const total = subtotal + tax;
 
-      document.getElementById('order-subtotal').textContent = `$${subtotal.toFixed(2)}`;
-      document.getElementById('order-tax').textContent = `$${tax.toFixed(2)}`;
-      document.getElementById('order-total').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('order-subtotal').textContent = `₱${subtotal.toFixed(2)}`;
+      document.getElementById('order-tax').textContent = `₱${tax.toFixed(2)}`;
+      document.getElementById('order-total').textContent = `₱${total.toFixed(2)}`;
     }
 
     function placeOrder() {
@@ -453,23 +514,71 @@
 
       const customer = orderItems[0].customer;
       const itemsText = orderItems.map(i => `${i.product} (${i.quantity})`).join(', ');
-      const total = orderItems.reduce((sum, item) => sum + item.price, 0) * 1.1;
+      const subtotal = orderItems.reduce((sum, item) => sum + item.price, 0);
+      const tax = subtotal * 0.1;
+      const total = subtotal + tax;
       const orderId = `#ORD${String(orderCounter).padStart(3, '0')}`;
       orderCounter++;
 
-      const newRow = `
+      const newOrderRow = `
         <tr class="border-t border-gray-100">
           <td class="px-6 py-4 font-500">${orderId}</td>
           <td class="px-6 py-4">${customer}</td>
           <td class="px-6 py-4">${itemsText}</td>
-          <td class="px-6 py-4 font-600">$${total.toFixed(2)}</td>
+          <td class="px-6 py-4 font-600">₱${total.toFixed(2)}</td>
           <td class="px-6 py-4 text-gray-400">${new Date().toLocaleDateString()}</td>
         </tr>
       `;
 
-      document.getElementById('orders-history').insertAdjacentHTML('afterbegin', newRow);
+      document.getElementById('orders-history').insertAdjacentHTML('afterbegin', newOrderRow);
+
+      const newTransactionRow = `
+        <tr class="border-t border-gray-100">
+          <td class="px-6 py-4 font-500">${orderId}</td>
+          <td class="px-6 py-4">${customer}</td>
+          <td class="px-6 py-4">${itemsText}</td>
+          <td class="px-6 py-4 font-600">₱${total.toFixed(2)}</td>
+          <td class="px-6 py-4 text-gray-400">${new Date().toLocaleDateString()}</td>
+        </tr>
+      `;
+      document.getElementById('transactions-history').insertAdjacentHTML('afterbegin', newTransactionRow);
+
+      totalRevenue += total;
+      transactionCount += 1;
+      document.getElementById('metric-revenue').textContent = `₱${totalRevenue.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('metric-transactions').textContent = transactionCount;
+
       orderItems = [];
       renderOrderItems();
+    }
+
+    function showProductBenefit(productKey, card) {
+      const data = productBenefitData[productKey];
+      if (!data) return;
+
+      document.getElementById('product-benefit-title').textContent = data.title;
+      document.getElementById('product-benefit-subtitle').textContent = data.subtitle;
+      document.getElementById('benefit-icon').className = `h-14 w-14 rounded-3xl flex items-center justify-center ${data.iconBg} text-2xl`;
+      document.getElementById('benefit-icon').innerHTML = data.icon;
+
+      document.getElementById('product-benefit-list').innerHTML = data.list.map(item => `
+        <li class="flex items-start gap-3">
+          <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-700">✓</span>
+          <span>${item}</span>
+        </li>
+      `).join('');
+
+      document.querySelectorAll('.product-card').forEach(el => el.classList.remove('ring-2','ring-yellow-200','ring-emerald-200','ring-sky-200','border-yellow-300','border-emerald-300','border-sky-300'));
+      if (card) {
+        card.classList.add('ring-2', productKey === 'premium' ? 'ring-yellow-200' : productKey === 'starter' ? 'ring-emerald-200' : 'ring-sky-200');
+      }
+
+      document.getElementById('product-benefit-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function hideProductBenefit() {
+      document.getElementById('product-benefit-modal').classList.add('hidden');
     }
 
     lucide.createIcons();
