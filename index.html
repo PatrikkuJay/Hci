@@ -158,26 +158,17 @@
      </div>
     </div><!-- Products Page -->
     <div id="page-products" class="hidden">
-     <h2 class="text-2xl font-800 text-gray-800 mb-1">Products</h2>
-     <p class="text-sm text-gray-400 mb-6">Manage your product catalog</p>
-     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="product-card card-shadow rounded-2xl p-5 bg-white cursor-pointer border border-transparent transition transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-yellow-300" onclick="showProductBenefit('premium', this)">
-       <div class="w-full h-24 rounded-xl mb-4" style="background:linear-gradient(135deg,#fef08a,#facc15);"></div>
-       <h4 class="font-700 text-gray-800">Premium Plan</h4>
-       <p class="text-xs text-gray-400 mt-1">₱299/mo • 142 subscribers</p>
+     <div class="flex justify-between items-center mb-6">
+      <div>
+       <h2 class="text-2xl font-800 text-gray-800 mb-1">Products</h2>
+       <p class="text-sm text-gray-400">Manage your product catalog</p>
       </div>
-      <div class="product-card card-shadow rounded-2xl p-5 bg-white cursor-pointer border border-transparent transition transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-emerald-300" onclick="showProductBenefit('starter', this)">
-       <div class="w-full h-24 rounded-xl mb-4" style="background:linear-gradient(135deg,#d1fae5,#6ee7b7);"></div>
-       <h4 class="font-700 text-gray-800">Starter Kit</h4>
-       <p class="text-xs text-gray-400 mt-1">₱49/mo • 389 subscribers</p>
-      </div>
-      <div class="product-card card-shadow rounded-2xl p-5 bg-white cursor-pointer border border-transparent transition transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-sky-300" onclick="showProductBenefit('pro', this)">
-       <div class="w-full h-24 rounded-xl mb-4" style="background:linear-gradient(135deg,#e0f2fe,#7dd3fc);"></div>
-       <h4 class="font-700 text-gray-800">Pro Bundle</h4>
-       <p class="text-xs text-gray-400 mt-1">₱189/mo • 67 subscribers</p>
-      </div>
+      <button onclick="showAddProductModal()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+       <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>Add Product
+      </button>
      </div>
-    </div><!-- Customers Page -->
+     <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </div><!-- Products Page -->
 
     <div id="product-benefit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4 py-6" onclick="hideProductBenefit()">
       <div class="w-full max-w-lg rounded-[40px] bg-white p-8 shadow-[0_30px_90px_rgba(0,0,0,0.15)]" onclick="event.stopPropagation()">
@@ -208,6 +199,14 @@
           <div>
             <label class="text-xs font-600 text-gray-500 mb-1 block">Subscribers</label>
             <input type="number" id="product-subscribers" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="0">
+          </div>
+          <div>
+            <label class="text-xs font-600 text-gray-500 mb-1 block">Benefit Subtitle</label>
+            <input type="text" id="product-benefit-edit-subtitle" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="Enter benefit subtitle">
+          </div>
+          <div>
+            <label class="text-xs font-600 text-gray-500 mb-1 block">Benefits</label>
+            <textarea id="product-benefit-edit-list" rows="4" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="One benefit per line"></textarea>
           </div>
           <div>
             <label class="text-xs font-600 text-gray-500 mb-1 block">Color Theme</label>
@@ -271,7 +270,7 @@
        <div class="card-shadow rounded-2xl p-6 bg-white">
         <h3 class="text-lg font-700 text-gray-800 mb-4">Create Order</h3>
         <div class="space-y-4">
-         <div><label class="text-xs font-600 text-gray-500 mb-1 block">Customer</label> <select id="order-customer" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition"> <option value="">Select Customer</option> <option value="Sarah Johnson">Sarah Johnson</option> <option value="Mike Chen">Mike Chen</option> <option value="Emma Wilson">Emma Wilson</option> </select>
+         <div><label class="text-xs font-600 text-gray-500 mb-1 block">Customer</label> <input type="text" id="order-customer" placeholder="Enter customer name" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition">
          </div>
          <div><label class="text-xs font-600 text-gray-500 mb-1 block">Product</label> <select id="order-product" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition"> <option value="">Select Product</option> <option value="Premium Plan - ₱299">Premium Plan - ₱299</option> <option value="Starter Kit - ₱49">Starter Kit - ₱49</option> <option value="Pro Bundle - ₱189">Pro Bundle - ₱189</option> <option value="Basic Plan - ₱19">Basic Plan - ₱19</option> </select>
          </div>
@@ -346,6 +345,44 @@
     let orderCounter = 1;
     let transactionCount = 1248;
     let totalRevenue = 124500;
+
+    const initialProducts = [
+      {
+        id: 'premium',
+        name: 'Premium Plan',
+        price: 299,
+        subscribers: 142,
+        color: 'yellow',
+        gradient: 'linear-gradient(135deg,#fef08a,#facc15)',
+        borderColor: 'hover:border-yellow-300',
+        benefitSubtitle: 'Unlock full control over your business workflows.',
+        benefitList: ['Priority 24/7 technical support.', 'Advanced data analytics dashboard.', 'Custom reporting and premium onboarding.']
+      },
+      {
+        id: 'starter',
+        name: 'Starter Kit',
+        price: 49,
+        subscribers: 389,
+        color: 'emerald',
+        gradient: 'linear-gradient(135deg,#d1fae5,#6ee7b7)',
+        borderColor: 'hover:border-emerald-300',
+        benefitSubtitle: 'A smooth launch package for new users.',
+        benefitList: ['Easy setup with guided onboarding.', 'Reliable support for early growth.', 'Simple tools to get started quickly.']
+      },
+      {
+        id: 'pro',
+        name: 'Pro Bundle',
+        price: 189,
+        subscribers: 67,
+        color: 'sky',
+        gradient: 'linear-gradient(135deg,#e0f2fe,#7dd3fc)',
+        borderColor: 'hover:border-sky-300',
+        benefitSubtitle: 'Grow faster with team-ready workflows.',
+        benefitList: ['Premium features for teams.', 'Custom workflows and collaboration.', 'Dedicated optimization for scaling.']
+      }
+    ];
+
+    let products = [...initialProducts];
 
     const productBenefitData = {
       premium: {
@@ -597,37 +634,22 @@
       const product = products.find(p => p.id === productKey);
       const data = productBenefitData[productKey];
 
-      if (data) {
-        // Use predefined benefit data
-        document.getElementById('product-benefit-title').textContent = data.title;
-        document.getElementById('product-benefit-subtitle').textContent = data.subtitle;
-        document.getElementById('benefit-icon').className = `h-14 w-14 rounded-3xl flex items-center justify-center ${data.iconBg} text-2xl`;
-        document.getElementById('benefit-icon').innerHTML = data.icon;
-        document.getElementById('product-benefit-list').innerHTML = data.list.map(item => `
+      const benefitSubtitle = product?.benefitSubtitle || data?.subtitle || `₱${product?.price}/month • ${product?.subscribers} subscribers`;
+      const benefitList = product?.benefitList || data?.list || [
+        `Custom product with ${product?.subscribers} active subscribers`,
+        `Priced at ₱${product?.price} per month`
+      ];
+
+      document.getElementById('product-benefit-title').textContent = product?.name || data?.title || '';
+      document.getElementById('product-benefit-subtitle').textContent = benefitSubtitle;
+      document.getElementById('benefit-icon').className = `h-14 w-14 rounded-3xl flex items-center justify-center ${data?.iconBg || `bg-${product?.color}-100 text-${product?.color}-700`} text-2xl`;
+      document.getElementById('benefit-icon').innerHTML = data?.icon || '<i data-lucide="package"></i>';
+      document.getElementById('product-benefit-list').innerHTML = benefitList.map(item => `
           <li class="flex items-start gap-3">
             <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-700">✓</span>
             <span>${item}</span>
           </li>
         `).join('');
-      } else if (product) {
-        // Show basic info for custom products
-        document.getElementById('product-benefit-title').textContent = product.name;
-        document.getElementById('product-benefit-subtitle').textContent = `₱${product.price}/month • ${product.subscribers} subscribers`;
-        document.getElementById('benefit-icon').className = `h-14 w-14 rounded-3xl flex items-center justify-center bg-${product.color}-100 text-${product.color}-700 text-2xl`;
-        document.getElementById('benefit-icon').innerHTML = '<i data-lucide="package"></i>';
-        document.getElementById('product-benefit-list').innerHTML = `
-          <li class="flex items-start gap-3">
-            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-700">✓</span>
-            <span>Custom product with ${product.subscribers} active subscribers</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-700">✓</span>
-            <span>Priced at ₱${product.price} per month</span>
-          </li>
-        `;
-      } else {
-        return;
-      }
 
       document.querySelectorAll('.product-card').forEach(el => el.classList.remove('ring-2','ring-yellow-200','ring-emerald-200','ring-sky-200','ring-purple-200','ring-red-200','ring-indigo-200'));
       if (card) {
@@ -654,16 +676,14 @@
           <div class="w-full h-24 rounded-xl mb-4" style="background:${product.gradient};"></div>
           <h4 class="font-700 text-gray-800">${product.name}</h4>
           <p class="text-xs text-gray-400 mt-1">₱${product.price}/mo • ${product.subscribers} subscribers</p>
-          ${!isOriginal ? `
           <div class="flex gap-2 mt-3 opacity-0 hover:opacity-100 transition-opacity">
             <button onclick="event.stopPropagation(); showEditProductModal('${product.id}')" class="flex-1 py-1 px-2 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition">
               Edit
             </button>
-            <button onclick="event.stopPropagation(); deleteProduct('${product.id}')" class="flex-1 py-1 px-2 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition">
+            ${!isOriginal ? `<button onclick="event.stopPropagation(); deleteProduct('${product.id}')" class="flex-1 py-1 px-2 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition">
               Delete
-            </button>
+            </button>` : ''}
           </div>
-          ` : ''}
         </div>
       `}).join('');
       lucide.createIcons();
@@ -674,6 +694,8 @@
       document.getElementById('product-name').value = '';
       document.getElementById('product-price').value = '';
       document.getElementById('product-subscribers').value = '';
+      document.getElementById('product-benefit-edit-subtitle').value = '';
+      document.getElementById('product-benefit-edit-list').value = '';
       document.getElementById('product-color').value = 'yellow';
       document.getElementById('product-modal').classList.remove('hidden');
     }
@@ -686,6 +708,8 @@
       document.getElementById('product-name').value = product.name;
       document.getElementById('product-price').value = product.price;
       document.getElementById('product-subscribers').value = product.subscribers;
+      document.getElementById('product-benefit-edit-subtitle').value = product.benefitSubtitle || '';
+      document.getElementById('product-benefit-edit-list').value = (product.benefitList || []).join('\n');
       document.getElementById('product-color').value = product.color;
       document.getElementById('product-modal').dataset.editingId = productId;
       document.getElementById('product-modal').classList.remove('hidden');
@@ -703,6 +727,11 @@
       }
 
       const editingId = document.getElementById('product-modal').dataset.editingId;
+      const benefitSubtitle = document.getElementById('product-benefit-edit-subtitle').value.trim();
+      const benefitList = document.getElementById('product-benefit-edit-list').value
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
 
       if (editingId) {
         // Edit existing product
@@ -712,6 +741,8 @@
           product.price = price;
           product.subscribers = subscribers;
           product.color = color;
+          product.benefitSubtitle = benefitSubtitle;
+          product.benefitList = benefitList;
           updateProductGradients(product);
         }
         delete document.getElementById('product-modal').dataset.editingId;
@@ -724,7 +755,9 @@
           subscribers,
           color,
           gradient: '',
-          borderColor: `hover:border-${color}-300`
+          borderColor: `hover:border-${color}-300`,
+          benefitSubtitle,
+          benefitList
         };
         updateProductGradients(newProduct);
         products.push(newProduct);
@@ -748,6 +781,11 @@
     }
 
     function deleteProduct(productId) {
+      const originalProductIds = ['premium', 'starter', 'pro'];
+      if (originalProductIds.includes(productId)) {
+        alert('This product cannot be deleted.');
+        return;
+      }
       if (confirm('Are you sure you want to delete this product?')) {
         products = products.filter(p => p.id !== productId);
         renderProducts();
