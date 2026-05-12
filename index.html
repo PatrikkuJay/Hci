@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BManage</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .card-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .modal-shadow { box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-hidden">
+  <div id="app" class="h-full w-full flex">
+   <!-- Login Modal Overlay -->
+   <div id="login-overlay" class="fixed inset-0 z-50 flex items-center justify-center" style="background: linear-gradient(135deg, #b8f0c8 0%, #fef9c3 100%);">
+    <div class="modal-shadow rounded-2xl p-10 w-full max-w-sm" style="background: #ffffff;">
+     <h2 class="text-2xl font-800 text-gray-800 mb-1 text-center" id="login-title">BManage</h2>
+     <p class="text-sm text-gray-400 mb-8 text-center">Sign in to your dashboard</p>
+     <div id="login-tab-btns" class="flex mb-6 rounded-xl overflow-hidden" style="background: #f3f4f6;">
+      <button onclick="switchTab('login')" id="tab-login" class="flex-1 py-2.5 text-sm font-600 rounded-xl transition-all" style="background:#facc15;color:#1f2937;">Login</button> <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-2.5 text-sm font-600 rounded-xl transition-all text-gray-500">Register</button>
+     </div>
+     <form onsubmit="handleLogin(event)">
+      <label for="email" class="text-xs font-600 text-gray-500 mb-1 block">Email</label> <input id="email" type="email" placeholder="you@business.com" class="w-full mb-4 px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition"> <label for="password" class="text-xs font-600 text-gray-500 mb-1 block">Password</label> <input id="password" type="password" placeholder="••••••••" class="w-full mb-6 px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition">
+      <div id="register-field" class="hidden">
+       <label for="confirm-pw" class="text-xs font-600 text-gray-500 mb-1 block">Confirm Password</label> <input id="confirm-pw" type="password" placeholder="••••••••" class="w-full mb-6 px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition">
+      </div><button type="submit" id="login-btn" class="w-full py-3 rounded-xl font-700 text-gray-900 text-sm transition hover:brightness-95" style="background:#facc15;">Login</button>
+     </form>
+    </div>
+   </div><!-- Sidebar -->
+   <aside id="sidebar" class="hidden w-64 h-full flex-shrink-0 flex flex-col py-8 px-5" style="background: #b8f0c8;">
+    <h1 id="sidebar-title" class="text-xl font-800 text-gray-800 mb-10 px-3">BManage</h1>
+    <nav class="flex flex-col gap-1">
+     <button onclick="switchPage('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-800 transition" style="background:rgba(255,255,255,0.5);"> <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard </button> <button onclick="switchPage('transactions')" id="nav-transactions" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-600 transition hover:bg-white/30"> <i data-lucide="receipt" style="width:18px;height:18px;"></i> Transactions </button> <button onclick="switchPage('products')" id="nav-products" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-600 transition hover:bg-white/30"> <i data-lucide="package" style="width:18px;height:18px;"></i> Products </button> <button onclick="switchPage('orders')" id="nav-orders" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-600 transition hover:bg-white/30"> <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i> Orders </button> <button onclick="switchPage('customers')" id="nav-customers" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-600 text-gray-600 transition hover:bg-white/30"> <i data-lucide="users" style="width:18px;height:18px;"></i> Customers </button>
+    </nav>
+    <div class="mt-auto px-3">
+     <button onclick="logout()" class="flex items-center gap-2 text-sm text-gray-500 font-500 hover:text-gray-800 transition"> <i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign out </button>
+    </div>
+   </aside><!-- Main Content -->
+   <main id="main-content" class="hidden flex-1 h-full overflow-auto p-8" style="background: #fefce8;">
+    <!-- User Greeting -->
+    <div class="mb-6 flex items-center justify-between">
+     <div>
+      <p class="text-sm text-gray-400">Welcome back,</p>
+      <h1 id="user-greeting" class="text-2xl font-800 text-gray-800">John Doe</h1>
+     </div>
+     <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:#b8f0c8;">
+      <i data-lucide="user" style="width:20px;height:20px;color:#1f2937;"></i>
+     </div>
+    </div><!-- Dashboard -->
+    <div id="page-dashboard">
+     <h2 class="text-2xl font-800 text-gray-800 mb-1">Dashboard</h2>
+     <p class="text-sm text-gray-400 mb-8">Welcome back! Here's your business overview.</p>
+     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+      <div class="card-shadow rounded-2xl p-6 bg-white">
+       <div class="flex items-center gap-2 mb-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:#fef08a;"><i data-lucide="dollar-sign" style="width:18px;height:18px;color:#a16207;"></i>
+        </div><span class="text-xs font-600 text-gray-400">Total Revenue</span>
+       </div>
+       <p id="metric-revenue" class="text-2xl font-800 text-gray-800">₱124,500</p><span class="text-xs text-green-500 font-600">↑ 12.5% from last month</span>
+      </div>
+      <div class="card-shadow rounded-2xl p-6 bg-white">
+       <div class="flex items-center gap-2 mb-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:#d1fae5;"><i data-lucide="repeat" style="width:18px;height:18px;color:#065f46;"></i>
+        </div><span class="text-xs font-600 text-gray-400">Transactions</span>
+       </div>
+       <p id="metric-transactions" class="text-2xl font-800 text-gray-800">1,248</p><span class="text-xs text-green-500 font-600">↑ 8.2% from last month</span>
+      </div>
+      <div class="card-shadow rounded-2xl p-6 bg-white">
+       <div class="flex items-center gap-2 mb-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:#e0f2fe;"><i data-lucide="package" style="width:18px;height:18px;color:#0369a1;"></i>
+        </div><span class="text-xs font-600 text-gray-400">Active Products</span>
+       </div>
+       <p id="metric-products" class="text-2xl font-800 text-gray-800">56</p><span class="text-xs text-gray-400 font-600">+3 this week</span>
+      </div>
+      <div class="card-shadow rounded-2xl p-6 bg-white">
+       <div class="flex items-center gap-2 mb-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:#fce7f3;"><i data-lucide="users" style="width:18px;height:18px;color:#9d174d;"></i>
+        </div><span class="text-xs font-600 text-gray-400">Total Customers</span>
+       </div>
+       <p id="metric-customers" class="text-2xl font-800 text-gray-800">892</p><span class="text-xs text-green-500 font-600">↑ 4.1% from last month</span>
+      </div>
+     </div><!-- Mini chart area -->
+     <div class="card-shadow rounded-2xl p-6 bg-white">
+      <h3 class="text-sm font-700 text-gray-700 mb-4">Revenue Trend (Last 7 days)</h3>
+      <div class="flex items-end gap-3 h-32">
+       <div class="flex-1 rounded-lg" style="background:#facc15;height:60%;"></div>
+       <div class="flex-1 rounded-lg" style="background:#facc15;height:80%;"></div>
+       <div class="flex-1 rounded-lg" style="background:#facc15;height:45%;"></div>
+       <div class="flex-1 rounded-lg" style="background:#facc15;height:90%;"></div>
+       <div class="flex-1 rounded-lg" style="background:#facc15;height:70%;"></div>
+       <div class="flex-1 rounded-lg" style="background:#facc15;height:100%;"></div>
+       <div class="flex-1 rounded-lg" style="background:#facc15;height:85%;"></div>
+      </div>
+      <div class="flex gap-3 mt-2">
+       <span class="flex-1 text-center text-[10px] text-gray-400">Mon</span> <span class="flex-1 text-center text-[10px] text-gray-400">Tue</span> <span class="flex-1 text-center text-[10px] text-gray-400">Wed</span> <span class="flex-1 text-center text-[10px] text-gray-400">Thu</span> <span class="flex-1 text-center text-[10px] text-gray-400">Fri</span> <span class="flex-1 text-center text-[10px] text-gray-400">Sat</span> <span class="flex-1 text-center text-[10px] text-gray-400">Sun</span>
+      </div>
+     </div>
+    </div><!-- Transactions Page -->
+    <div id="page-transactions" class="hidden">
+     <h2 class="text-2xl font-800 text-gray-800 mb-1">Transactions</h2>
+     <p class="text-sm text-gray-400 mb-6">Recent transaction history</p>
+     <div class="card-shadow rounded-2xl bg-white overflow-hidden">
+      <table class="w-full text-sm">
+       <thead>
+        <tr style="background:#f9fafb;">
+         <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Customer ID</th>
+         <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Name</th>
+         <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Product</th>
+         <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Amount</th>
+         <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Date</th>
+        </tr>
+       </thead>
+       <tbody class="text-gray-700">
+        <tr class="border-t border-gray-100">
+         <td class="px-6 py-4 font-500">#C001</td>
+         <td class="px-6 py-4">Sarah Johnson</td>
+         <td class="px-6 py-4">Premium Plan</td>
+         <td class="px-6 py-4 font-600">₱299.00</td>
+         <td class="px-6 py-4 text-gray-400">Jan 15, 2024</td>
+        </tr>
+        <tr class="border-t border-gray-100">
+         <td class="px-6 py-4 font-500">#C002</td>
+         <td class="px-6 py-4">Mike Chen</td>
+         <td class="px-6 py-4">Starter Kit</td>
+         <td class="px-6 py-4 font-600">₱49.00</td>
+         <td class="px-6 py-4 text-gray-400">Jan 14, 2024</td>
+        </tr>
+        <tr class="border-t border-gray-100">
+         <td class="px-6 py-4 font-500">#C003</td>
+         <td class="px-6 py-4">Emma Wilson</td>
+         <td class="px-6 py-4">Pro Bundle</td>
+         <td class="px-6 py-4 font-600">₱189.00</td>
+         <td class="px-6 py-4 text-gray-400">Jan 13, 2024</td>
+        </tr>
+        <tr class="border-t border-gray-100">
+         <td class="px-6 py-4 font-500">#C004</td>
+         <td class="px-6 py-4">James Lee</td>
+         <td class="px-6 py-4">Enterprise</td>
+         <td class="px-6 py-4 font-600">₱599.00</td>
+         <td class="px-6 py-4 text-gray-400">Jan 12, 2024</td>
+        </tr>
+        <tr class="border-t border-gray-100">
+         <td class="px-6 py-4 font-500">#C005</td>
+         <td class="px-6 py-4">Olivia Brown</td>
+         <td class="px-6 py-4">Basic Plan</td>
+         <td class="px-6 py-4 font-600">₱19.00</td>
+         <td class="px-6 py-4 text-gray-400">Jan 11, 2024</td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div><!-- Products Page -->
+    <div id="page-products" class="hidden">
+     <h2 class="text-2xl font-800 text-gray-800 mb-1">Products</h2>
+     <p class="text-sm text-gray-400 mb-6">Manage your product catalog</p>
+     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="card-shadow rounded-2xl p-5 bg-white">
+       <div class="w-full h-24 rounded-xl mb-4" style="background:linear-gradient(135deg,#fef08a,#facc15);"></div>
+       <h4 class="font-700 text-gray-800">Premium Plan</h4>
+       <p class="text-xs text-gray-400 mt-1">₱299/mo • 142 subscribers</p>
+      </div>
+      <div class="card-shadow rounded-2xl p-5 bg-white">
+       <div class="w-full h-24 rounded-xl mb-4" style="background:linear-gradient(135deg,#d1fae5,#6ee7b7);"></div>
+       <h4 class="font-700 text-gray-800">Starter Kit</h4>
+       <p class="text-xs text-gray-400 mt-1">₱49/mo • 389 subscribers</p>
+      </div>
+      <div class="card-shadow rounded-2xl p-5 bg-white">
+       <div class="w-full h-24 rounded-xl mb-4" style="background:linear-gradient(135deg,#e0f2fe,#7dd3fc);"></div>
+       <h4 class="font-700 text-gray-800">Pro Bundle</h4>
+       <p class="text-xs text-gray-400 mt-1">₱189/mo • 67 subscribers</p>
+      </div>
+     </div>
+    </div><!-- Customers Page -->
+    <div id="page-customers" class="hidden">
+     <h2 class="text-2xl font-800 text-gray-800 mb-1">Customers</h2>
+     <p class="text-sm text-gray-400 mb-6">Your customer base</p>
+     <div class="card-shadow rounded-2xl bg-white overflow-hidden">
+      <table class="w-full text-sm">
+       <thead>
+        <tr style="background:#f9fafb;">
+         <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Name</th>
+         <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Email</th>
+         <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Plan</th>
+         <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Status</th>
+        </tr>
+       </thead>
+       <tbody class="text-gray-700">
+        <tr class="border-t border-gray-100">
+         <td class="px-6 py-4 font-500">Sarah Johnson</td>
+         <td class="px-6 py-4">sarah@email.com</td>
+         <td class="px-6 py-4">Premium</td>
+         <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-600 bg-green-100 text-green-700">Active</span></td>
+        </tr>
+        <tr class="border-t border-gray-100">
+         <td class="px-6 py-4 font-500">Mike Chen</td>
+         <td class="px-6 py-4">mike@email.com</td>
+         <td class="px-6 py-4">Starter</td>
+         <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-600 bg-green-100 text-green-700">Active</span></td>
+        </tr>
+        <tr class="border-t border-gray-100">
+         <td class="px-6 py-4 font-500">Emma Wilson</td>
+         <td class="px-6 py-4">emma@email.com</td>
+         <td class="px-6 py-4">Standard</td>
+         <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-600 bg-yellow-100 text-yellow-700">Pending</span></td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div><!-- Orders Page -->
+    <div id="page-orders" class="hidden">
+     <h2 class="text-2xl font-800 text-gray-800 mb-1">Orders</h2>
+     <p class="text-sm text-gray-400 mb-6">Create and manage orders</p>
+     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><!-- Order Creation -->
+      <div class="lg:col-span-1">
+       <div class="card-shadow rounded-2xl p-6 bg-white">
+        <h3 class="text-lg font-700 text-gray-800 mb-4">Create Order</h3>
+        <div class="space-y-4">
+         <div><label class="text-xs font-600 text-gray-500 mb-1 block">Customer</label> <select id="order-customer" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition"> <option value="">Select Customer</option> <option value="Sarah Johnson">Sarah Johnson</option> <option value="Mike Chen">Mike Chen</option> <option value="Emma Wilson">Emma Wilson</option> </select>
+         </div>
+         <div><label class="text-xs font-600 text-gray-500 mb-1 block">Product</label> <select id="order-product" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition"> <option value="">Select Product</option> <option value="Premium Plan">Premium Plan - ₱299</option> <option value="Starter Kit">Starter Kit - ₱49</option> <option value="Pro Bundle">Pro Bundle - ₱189</option> <option value="Basic Plan">Basic Plan - ₱19</option> </select>
+         </div>
+         <div><label class="text-xs font-600 text-gray-500 mb-1 block">Quantity</label> <input type="number" id="order-quantity" min="1" value="1" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 transition">
+         </div><button onclick="addOrderItem()" class="w-full py-3 rounded-xl font-600 text-gray-900 text-sm transition hover:brightness-95" style="background:#facc15;">Add to Order</button>
+        </div>
+       </div>
+      </div><!-- Order Items & Summary -->
+      <div class="lg:col-span-2">
+       <div class="card-shadow rounded-2xl p-6 bg-white">
+        <h3 class="text-lg font-700 text-gray-800 mb-4">Order Items</h3>
+        <div id="order-items-list" class="space-y-2 mb-6 max-h-64 overflow-y-auto">
+         <p class="text-sm text-gray-400 text-center py-4">No items added yet</p>
+        </div>
+        <div class="border-t border-gray-200 pt-4">
+         <div class="flex justify-between mb-2"><span class="text-sm text-gray-600">Subtotal:</span> <span id="order-subtotal" class="text-sm font-600 text-gray-800">₱0.00</span>
+         </div>
+         <div class="flex justify-between mb-4"><span class="text-sm text-gray-600">Tax (10%):</span> <span id="order-tax" class="text-sm font-600 text-gray-800">₱0.00</span>
+         </div>
+         <div class="flex justify-between mb-4 pb-4 border-b border-gray-200"><span class="text-sm font-700 text-gray-800">Total:</span> <span id="order-total" class="text-lg font-800 text-gray-800">₱0.00</span>
+         </div><button onclick="placeOrder()" class="w-full py-3 rounded-xl font-600 text-white text-sm transition hover:brightness-95" style="background:#6ee7b7;">Place Order</button>
+        </div>
+       </div>
+      </div>
+     </div><!-- Orders History -->
+     <div class="card-shadow rounded-2xl p-6 bg-white mt-6">
+      <h3 class="text-lg font-700 text-gray-800 mb-4">Order History</h3>
+      <div class="overflow-x-auto">
+       <table class="w-full text-sm">
+        <thead>
+         <tr style="background:#f9fafb;">
+          <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Order ID</th>
+          <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Customer</th>
+          <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Items</th>
+          <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Total</th>
+          <th class="text-left px-6 py-4 font-600 text-gray-500 text-xs">Date</th>
+         </tr>
+        </thead>
+        <tbody id="orders-history" class="text-gray-700">
+         <tr class="border-t border-gray-100">
+          <td class="px-6 py-4 font-500">#ORD001</td>
+          <td class="px-6 py-4">Sarah Johnson</td>
+          <td class="px-6 py-4">Premium Plan (1)</td>
+          <td class="px-6 py-4 font-600">₱299.00</td>
+          <td class="px-6 py-4 text-gray-400">Jan 15, 2024</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
+    </div>
+   </main>
+  </div>
+  <script>
+    const defaultConfig = {
+      app_title: 'BManage',
+      revenue_value: '$124,500',
+      transactions_value: '1,248',
+      products_value: '56',
+      customers_value: '892',
+      example_user_name: 'John Doe',
+      background_color: '#fefce8',
+      sidebar_color: '#b8f0c8',
+      text_color: '#1f2937',
+      primary_action_color: '#facc15',
+      secondary_action_color: '#6ee7b7',
+      font_family: 'Plus Jakarta Sans',
+      font_size: 14
+    };
+
+    let orderItems = [];
+    let orderCounter = 1;
+
+    function applyConfig(config) {
+      document.getElementById('sidebar-title').textContent = config.app_title || defaultConfig.app_title;
+      document.getElementById('login-title').textContent = config.app_title || defaultConfig.app_title;
+      document.getElementById('user-greeting').textContent = config.example_user_name || defaultConfig.example_user_name;
+      document.getElementById('metric-revenue').textContent = config.revenue_value || defaultConfig.revenue_value;
+      document.getElementById('metric-transactions').textContent = config.transactions_value || defaultConfig.transactions_value;
+      document.getElementById('metric-products').textContent = config.products_value || defaultConfig.products_value;
+      document.getElementById('metric-customers').textContent = config.customers_value || defaultConfig.customers_value;
+
+      const bg = config.background_color || defaultConfig.background_color;
+      const sidebar = config.sidebar_color || defaultConfig.sidebar_color;
+      const textCol = config.text_color || defaultConfig.text_color;
+      const primary = config.primary_action_color || defaultConfig.primary_action_color;
+      const font = config.font_family || defaultConfig.font_family;
+      const size = config.font_size || defaultConfig.font_size;
+
+      document.getElementById('main-content').style.background = bg;
+      document.getElementById('sidebar').style.background = sidebar;
+      document.querySelectorAll('h2, h1, h4').forEach(el => el.style.color = textCol);
+      document.getElementById('login-btn').style.background = primary;
+      document.getElementById('tab-login').style.background = primary;
+      document.querySelectorAll('.rounded-lg[style*="background:#facc15"]').forEach(el => el.style.background = primary);
+      document.body.style.fontFamily = `${font}, sans-serif`;
+      document.body.style.fontSize = `${size}px`;
+      document.querySelectorAll('h2').forEach(el => el.style.fontSize = `${size * 1.7}px`);
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => { applyConfig(config); },
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+          { get: () => config.sidebar_color || defaultConfig.sidebar_color, set: (v) => { config.sidebar_color = v; window.elementSdk.setConfig({ sidebar_color: v }); } },
+          { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+          { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+          { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+        ],
+        borderables: [],
+        fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+        fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ['app_title', config.app_title || defaultConfig.app_title],
+        ['revenue_value', config.revenue_value || defaultConfig.revenue_value],
+        ['transactions_value', config.transactions_value || defaultConfig.transactions_value],
+        ['products_value', config.products_value || defaultConfig.products_value],
+        ['customers_value', config.customers_value || defaultConfig.customers_value],
+        ['example_user_name', config.example_user_name || defaultConfig.example_user_name]
+      ])
+    });
+
+    // Navigation
+    function switchPage(page) {
+      ['dashboard','transactions','products','orders','customers'].forEach(p => {
+        document.getElementById('page-' + p).classList.toggle('hidden', p !== page);
+        const nav = document.getElementById('nav-' + p);
+        if (p === page) { nav.style.background = 'rgba(255,255,255,0.5)'; nav.classList.replace('text-gray-600','text-gray-800'); }
+        else { nav.style.background = 'transparent'; nav.classList.replace('text-gray-800','text-gray-600'); }
+      });
+    }
+
+    function switchTab(tab) {
+      const loginTab = document.getElementById('tab-login');
+      const regTab = document.getElementById('tab-register');
+      const regField = document.getElementById('register-field');
+      const btn = document.getElementById('login-btn');
+      if (tab === 'login') {
+        loginTab.style.background = '#facc15'; loginTab.style.color = '#1f2937';
+        regTab.style.background = 'transparent'; regTab.style.color = '#6b7280';
+        regField.classList.add('hidden'); btn.textContent = 'Login';
+      } else {
+        regTab.style.background = '#facc15'; regTab.style.color = '#1f2937';
+        loginTab.style.background = 'transparent'; loginTab.style.color = '#6b7280';
+        regField.classList.remove('hidden'); btn.textContent = 'Register';
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      document.getElementById('login-overlay').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('hidden');
+      document.getElementById('sidebar').classList.add('flex');
+      document.getElementById('main-content').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function logout() {
+      document.getElementById('login-overlay').classList.remove('hidden');
+      document.getElementById('sidebar').classList.add('hidden');
+      document.getElementById('main-content').classList.add('hidden');
+      orderItems = [];
+    }
+
+    function addOrderItem() {
+      const customer = document.getElementById('order-customer').value;
+      const product = document.getElementById('order-product').value;
+      const quantity = parseInt(document.getElementById('order-quantity').value) || 1;
+
+      if (!customer || !product) {
+        alert('Please select customer and product');
+        return;
+      }
+
+      const price = parseFloat(product.match(/\$(\d+)/)[1]);
+      const item = { id: Date.now(), customer, product, quantity, price: price * quantity };
+      orderItems.push(item);
+      renderOrderItems();
+      document.getElementById('order-customer').value = '';
+      document.getElementById('order-product').value = '';
+      document.getElementById('order-quantity').value = '1';
+    }
+
+    function removeOrderItem(id) {
+      orderItems = orderItems.filter(item => item.id !== id);
+      renderOrderItems();
+    }
+
+    function renderOrderItems() {
+      const container = document.getElementById('order-items-list');
+      if (orderItems.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">No items added yet</p>';
+      } else {
+        container.innerHTML = orderItems.map(item => `
+          <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-100">
+            <div class="flex-1">
+              <p class="text-sm font-500 text-gray-800">${item.product}</p>
+              <p class="text-xs text-gray-400">Qty: ${item.quantity} | ${item.customer}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-600 text-gray-800">$${item.price.toFixed(2)}</p>
+              <button onclick="removeOrderItem(${item.id})" class="text-xs text-red-500 hover:text-red-700 mt-1">Remove</button>
+            </div>
+          </div>
+        `).join('');
+      }
+      updateOrderSummary();
+    }
+
+    function updateOrderSummary() {
+      const subtotal = orderItems.reduce((sum, item) => sum + item.price, 0);
+      const tax = subtotal * 0.1;
+      const total = subtotal + tax;
+
+      document.getElementById('order-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('order-tax').textContent = `$${tax.toFixed(2)}`;
+      document.getElementById('order-total').textContent = `$${total.toFixed(2)}`;
+    }
+
+    function placeOrder() {
+      if (orderItems.length === 0) {
+        alert('Please add items to the order');
+        return;
+      }
+
+      const customer = orderItems[0].customer;
+      const itemsText = orderItems.map(i => `${i.product} (${i.quantity})`).join(', ');
+      const total = orderItems.reduce((sum, item) => sum + item.price, 0) * 1.1;
+      const orderId = `#ORD${String(orderCounter).padStart(3, '0')}`;
+      orderCounter++;
+
+      const newRow = `
+        <tr class="border-t border-gray-100">
+          <td class="px-6 py-4 font-500">${orderId}</td>
+          <td class="px-6 py-4">${customer}</td>
+          <td class="px-6 py-4">${itemsText}</td>
+          <td class="px-6 py-4 font-600">$${total.toFixed(2)}</td>
+          <td class="px-6 py-4 text-gray-400">${new Date().toLocaleDateString()}</td>
+        </tr>
+      `;
+
+      document.getElementById('orders-history').insertAdjacentHTML('afterbegin', newRow);
+      orderItems = [];
+      renderOrderItems();
+    }
+
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f9e4e8432965bdd',t:'MTc3ODQ3MjM0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
