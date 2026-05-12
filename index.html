@@ -192,6 +192,41 @@
         <button onclick="hideProductBenefit()" class="w-full rounded-2xl bg-slate-950 px-5 py-4 text-sm font-700 text-white transition hover:bg-slate-800">Got it</button>
       </div>
     </div>
+
+    <div id="product-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4 py-6">
+      <div class="w-full max-w-md rounded-[40px] bg-white p-8 shadow-[0_30px_90px_rgba(0,0,0,0.15)]">
+        <h3 id="product-modal-title" class="text-xl font-800 text-gray-900 mb-6">Add New Product</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-600 text-gray-500 mb-1 block">Product Name</label>
+            <input type="text" id="product-name" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="Enter product name">
+          </div>
+          <div>
+            <label class="text-xs font-600 text-gray-500 mb-1 block">Price (₱)</label>
+            <input type="number" id="product-price" min="0" step="0.01" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="0.00">
+          </div>
+          <div>
+            <label class="text-xs font-600 text-gray-500 mb-1 block">Subscribers</label>
+            <input type="number" id="product-subscribers" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition" placeholder="0">
+          </div>
+          <div>
+            <label class="text-xs font-600 text-gray-500 mb-1 block">Color Theme</label>
+            <select id="product-color" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition">
+              <option value="yellow">Yellow (Premium)</option>
+              <option value="emerald">Green (Starter)</option>
+              <option value="sky">Blue (Pro)</option>
+              <option value="purple">Purple</option>
+              <option value="red">Red</option>
+              <option value="indigo">Indigo</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button onclick="hideProductModal()" class="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm font-600 text-gray-600 hover:bg-gray-50 transition">Cancel</button>
+          <button onclick="saveProduct()" class="flex-1 px-4 py-3 rounded-xl bg-blue-500 text-white text-sm font-600 hover:bg-blue-600 transition">Save Product</button>
+        </div>
+      </div>
+    </div>
     <div id="page-customers" class="hidden">
      <h2 class="text-2xl font-800 text-gray-800 mb-1">Customers</h2>
      <p class="text-sm text-gray-400 mb-6">Your customer base</p>
@@ -354,7 +389,7 @@
       document.getElementById('user-greeting').textContent = config.example_user_name || defaultConfig.example_user_name;
       document.getElementById('metric-revenue').textContent = config.revenue_value || defaultConfig.revenue_value;
       document.getElementById('metric-transactions').textContent = config.transactions_value || defaultConfig.transactions_value;
-      document.getElementById('metric-products').textContent = config.products_value || defaultConfig.products_value;
+      document.getElementById('metric-products').textContent = products.length;
       document.getElementById('metric-customers').textContent = config.customers_value || defaultConfig.customers_value;
 
       const bg = config.background_color || defaultConfig.background_color;
@@ -394,7 +429,7 @@
         ['app_title', config.app_title || defaultConfig.app_title],
         ['revenue_value', config.revenue_value || defaultConfig.revenue_value],
         ['transactions_value', config.transactions_value || defaultConfig.transactions_value],
-        ['products_value', config.products_value || defaultConfig.products_value],
+        ['products_value', products.length],
         ['customers_value', config.customers_value || defaultConfig.customers_value],
         ['example_user_name', config.example_user_name || defaultConfig.example_user_name]
       ])
@@ -408,6 +443,10 @@
         if (p === page) { nav.style.background = 'rgba(255,255,255,0.5)'; nav.classList.replace('text-gray-600','text-gray-800'); }
         else { nav.style.background = 'transparent'; nav.classList.replace('text-gray-800','text-gray-600'); }
       });
+      if (page === 'products') {
+        renderProducts();
+        updateProductSelect();
+      }
     }
 
     function switchTab(tab) {
@@ -555,24 +594,45 @@
     }
 
     function showProductBenefit(productKey, card) {
+      const product = products.find(p => p.id === productKey);
       const data = productBenefitData[productKey];
-      if (!data) return;
 
-      document.getElementById('product-benefit-title').textContent = data.title;
-      document.getElementById('product-benefit-subtitle').textContent = data.subtitle;
-      document.getElementById('benefit-icon').className = `h-14 w-14 rounded-3xl flex items-center justify-center ${data.iconBg} text-2xl`;
-      document.getElementById('benefit-icon').innerHTML = data.icon;
+      if (data) {
+        // Use predefined benefit data
+        document.getElementById('product-benefit-title').textContent = data.title;
+        document.getElementById('product-benefit-subtitle').textContent = data.subtitle;
+        document.getElementById('benefit-icon').className = `h-14 w-14 rounded-3xl flex items-center justify-center ${data.iconBg} text-2xl`;
+        document.getElementById('benefit-icon').innerHTML = data.icon;
+        document.getElementById('product-benefit-list').innerHTML = data.list.map(item => `
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-700">✓</span>
+            <span>${item}</span>
+          </li>
+        `).join('');
+      } else if (product) {
+        // Show basic info for custom products
+        document.getElementById('product-benefit-title').textContent = product.name;
+        document.getElementById('product-benefit-subtitle').textContent = `₱${product.price}/month • ${product.subscribers} subscribers`;
+        document.getElementById('benefit-icon').className = `h-14 w-14 rounded-3xl flex items-center justify-center bg-${product.color}-100 text-${product.color}-700 text-2xl`;
+        document.getElementById('benefit-icon').innerHTML = '<i data-lucide="package"></i>';
+        document.getElementById('product-benefit-list').innerHTML = `
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-700">✓</span>
+            <span>Custom product with ${product.subscribers} active subscribers</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-700">✓</span>
+            <span>Priced at ₱${product.price} per month</span>
+          </li>
+        `;
+      } else {
+        return;
+      }
 
-      document.getElementById('product-benefit-list').innerHTML = data.list.map(item => `
-        <li class="flex items-start gap-3">
-          <span class="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-700">✓</span>
-          <span>${item}</span>
-        </li>
-      `).join('');
-
-      document.querySelectorAll('.product-card').forEach(el => el.classList.remove('ring-2','ring-yellow-200','ring-emerald-200','ring-sky-200','border-yellow-300','border-emerald-300','border-sky-300'));
+      document.querySelectorAll('.product-card').forEach(el => el.classList.remove('ring-2','ring-yellow-200','ring-emerald-200','ring-sky-200','ring-purple-200','ring-red-200','ring-indigo-200'));
       if (card) {
-        card.classList.add('ring-2', productKey === 'premium' ? 'ring-yellow-200' : productKey === 'starter' ? 'ring-emerald-200' : 'ring-sky-200');
+        const ringColor = product ? `ring-${product.color}-200` : 'ring-yellow-200';
+        card.classList.add('ring-2', ringColor);
       }
 
       document.getElementById('product-benefit-modal').classList.remove('hidden');
@@ -582,6 +642,133 @@
     function hideProductBenefit() {
       document.getElementById('product-benefit-modal').classList.add('hidden');
     }
+
+    function renderProducts() {
+      const container = document.getElementById('products-grid');
+      const originalProductIds = ['premium', 'starter', 'pro'];
+
+      container.innerHTML = products.map(product => {
+        const isOriginal = originalProductIds.includes(product.id);
+        return `
+        <div class="product-card card-shadow rounded-2xl p-5 bg-white cursor-pointer border border-transparent transition transform duration-300 hover:-translate-y-1 hover:shadow-xl ${product.borderColor}" onclick="showProductBenefit('${product.id}', this)">
+          <div class="w-full h-24 rounded-xl mb-4" style="background:${product.gradient};"></div>
+          <h4 class="font-700 text-gray-800">${product.name}</h4>
+          <p class="text-xs text-gray-400 mt-1">₱${product.price}/mo • ${product.subscribers} subscribers</p>
+          ${!isOriginal ? `
+          <div class="flex gap-2 mt-3 opacity-0 hover:opacity-100 transition-opacity">
+            <button onclick="event.stopPropagation(); showEditProductModal('${product.id}')" class="flex-1 py-1 px-2 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+              Edit
+            </button>
+            <button onclick="event.stopPropagation(); deleteProduct('${product.id}')" class="flex-1 py-1 px-2 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition">
+              Delete
+            </button>
+          </div>
+          ` : ''}
+        </div>
+      `}).join('');
+      lucide.createIcons();
+    }
+
+    function showAddProductModal() {
+      document.getElementById('product-modal-title').textContent = 'Add New Product';
+      document.getElementById('product-name').value = '';
+      document.getElementById('product-price').value = '';
+      document.getElementById('product-subscribers').value = '';
+      document.getElementById('product-color').value = 'yellow';
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function showEditProductModal(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      document.getElementById('product-modal-title').textContent = 'Edit Product';
+      document.getElementById('product-name').value = product.name;
+      document.getElementById('product-price').value = product.price;
+      document.getElementById('product-subscribers').value = product.subscribers;
+      document.getElementById('product-color').value = product.color;
+      document.getElementById('product-modal').dataset.editingId = productId;
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function saveProduct() {
+      const name = document.getElementById('product-name').value.trim();
+      const price = parseFloat(document.getElementById('product-price').value);
+      const subscribers = parseInt(document.getElementById('product-subscribers').value);
+      const color = document.getElementById('product-color').value;
+
+      if (!name || isNaN(price) || isNaN(subscribers)) {
+        alert('Please fill in all fields correctly');
+        return;
+      }
+
+      const editingId = document.getElementById('product-modal').dataset.editingId;
+
+      if (editingId) {
+        // Edit existing product
+        const product = products.find(p => p.id === editingId);
+        if (product) {
+          product.name = name;
+          product.price = price;
+          product.subscribers = subscribers;
+          product.color = color;
+          updateProductGradients(product);
+        }
+        delete document.getElementById('product-modal').dataset.editingId;
+      } else {
+        // Add new product
+        const newProduct = {
+          id: Date.now().toString(),
+          name,
+          price,
+          subscribers,
+          color,
+          gradient: '',
+          borderColor: `hover:border-${color}-300`
+        };
+        updateProductGradients(newProduct);
+        products.push(newProduct);
+      }
+
+      renderProducts();
+      updateProductSelect();
+      hideProductModal();
+    }
+
+    function updateProductGradients(product) {
+      const gradients = {
+        yellow: 'linear-gradient(135deg,#fef08a,#facc15)',
+        emerald: 'linear-gradient(135deg,#d1fae5,#6ee7b7)',
+        sky: 'linear-gradient(135deg,#e0f2fe,#7dd3fc)',
+        purple: 'linear-gradient(135deg,#faf5ff,#d8b4fe)',
+        red: 'linear-gradient(135deg,#fef2f2,#fca5a5)',
+        indigo: 'linear-gradient(135deg,#eef2ff,#c7d2fe)'
+      };
+      product.gradient = gradients[product.color] || gradients.yellow;
+    }
+
+    function deleteProduct(productId) {
+      if (confirm('Are you sure you want to delete this product?')) {
+        products = products.filter(p => p.id !== productId);
+        renderProducts();
+        updateProductSelect();
+      }
+    }
+
+    function hideProductModal() {
+      document.getElementById('product-modal').classList.add('hidden');
+      delete document.getElementById('product-modal').dataset.editingId;
+    }
+
+    function updateProductSelect() {
+      const select = document.getElementById('order-product');
+      select.innerHTML = '<option value="">Select Product</option>' +
+        products.map(product => `<option value="${product.name} - ₱${product.price}">${product.name} - ₱${product.price}</option>`).join('');
+    }
+
+    // Initialize products on page load
+    renderProducts();
+    updateProductSelect();
 
     lucide.createIcons();
   </script>
