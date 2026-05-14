@@ -19,7 +19,7 @@
  </head>
  <body class="h-full overflow-hidden">
   <div id="app" class="h-full w-full flex">
-   <!-- Login Modal Overlay -->
+  
    <div id="login-overlay" class="fixed inset-0 z-50 flex items-center justify-center" style="background: linear-gradient(135deg, #b8f0c8 0%, #fef9c3 100%);">
     <div class="modal-shadow rounded-2xl p-10 w-full max-w-sm" style="background: #ffffff;">
      <h2 class="text-2xl font-800 text-gray-800 mb-1 text-center" id="login-title"><span class="inline-flex items-center gap-3 justify-center"><div class="w-10 h-10 bg-yellow-400 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layers" class="lucide lucide-layers w-6 h-6 text-gray-900"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg></div><span>BManage</span></span></h2>
@@ -34,7 +34,7 @@
       </div><button type="submit" id="login-btn" class="w-full py-3 rounded-xl font-700 text-gray-900 text-sm transition hover:brightness-95" style="background:#facc15;">Login</button>
      </form>
     </div>
-   </div><!-- Sidebar -->
+   </div>
    <aside id="sidebar" class="hidden w-64 h-full flex-shrink-0 flex flex-col py-8 px-5" style="background: #b8f0c8;">
     <h1 id="sidebar-title" class="text-xl font-800 text-gray-800 mb-10 px-3"><span class="inline-flex items-center gap-3"><div class="w-10 h-10 bg-yellow-400 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layers" class="lucide lucide-layers w-6 h-6 text-gray-900"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg></div><span>BManage</span></span></h1>
     <nav class="flex flex-col gap-1">
@@ -43,9 +43,9 @@
     <div class="mt-auto px-3">
      <button onclick="logout()" class="flex items-center gap-2 text-sm text-gray-500 font-500 hover:text-gray-800 transition"> <i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign out </button>
     </div>
-   </aside><!-- Main Content -->
+   </aside>
    <main id="main-content" class="hidden flex-1 h-full overflow-auto p-8" style="background: #fefce8;">
-    <!-- User Greeting -->
+    
     <div class="mb-6 flex items-center justify-between">
      <div>
       <p class="text-sm text-gray-400">Welcome back,</p>
@@ -54,7 +54,7 @@
      <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:#b8f0c8;">
       <i data-lucide="user" style="width:20px;height:20px;color:#1f2937;"></i>
      </div>
-    </div><!-- Dashboard -->
+    </div>
     <div id="page-dashboard">
      <h2 class="text-2xl font-800 text-gray-800 mb-1">Dashboard</h2>
      <p class="text-sm text-gray-400 mb-8">Welcome back! Here's your business overview.</p>
@@ -87,7 +87,7 @@
        </div>
        <p id="metric-customers" class="text-2xl font-800 text-gray-800">892</p><span class="text-xs text-green-500 font-600">↑ 4.1% from last month</span>
       </div>
-     </div><!-- Mini chart area -->
+     </div>
      <div class="card-shadow rounded-2xl p-6 bg-white transform transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <h3 class="text-sm font-700 text-gray-700 mb-4">Revenue Trend (Last 7 days)</h3>
       <div class="flex items-end gap-3 h-32">
@@ -103,7 +103,7 @@
        <span class="flex-1 text-center text-[10px] text-gray-400">Mon</span> <span class="flex-1 text-center text-[10px] text-gray-400">Tue</span> <span class="flex-1 text-center text-[10px] text-gray-400">Wed</span> <span class="flex-1 text-center text-[10px] text-gray-400">Thu</span> <span class="flex-1 text-center text-[10px] text-gray-400">Fri</span> <span class="flex-1 text-center text-[10px] text-gray-400">Sat</span> <span class="flex-1 text-center text-[10px] text-gray-400">Sun</span>
       </div>
      </div>
-    </div><!-- Transactions Page -->
+    </div>
     <div id="page-transactions" class="hidden">
      <h2 class="text-2xl font-800 text-gray-800 mb-1">Transactions</h2>
      <p class="text-sm text-gray-400 mb-6">Recent transaction history</p>
@@ -157,7 +157,7 @@
        </tbody>
       </table>
      </div>
-    </div><!-- Products Page -->
+    </div>
     <div id="page-products" class="hidden">
      <div class="flex justify-between items-center mb-6">
       <div>
@@ -169,7 +169,7 @@
       </button>
      </div>
      <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-    </div><!-- Products Page -->
+    </div>
 
     <div id="product-benefit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4 py-6" onclick="hideProductBenefit()">
       <div class="w-full max-w-lg rounded-[40px] bg-white p-8 shadow-[0_30px_90px_rgba(0,0,0,0.15)]" onclick="event.stopPropagation()">
@@ -283,11 +283,11 @@
        </tbody>
       </table>
      </div>
-    </div><!-- Orders Page -->
+    </div>
     <div id="page-orders" class="hidden">
      <h2 class="text-2xl font-800 text-gray-800 mb-1">Orders</h2>
      <p class="text-sm text-gray-400 mb-6">Create and manage orders</p>
-     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><!-- Order Creation -->
+     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-1">
        <div class="card-shadow rounded-2xl p-6 bg-white">
         <h3 class="text-lg font-700 text-gray-800 mb-4">Create Order</h3>
@@ -300,7 +300,7 @@
          </div><button onclick="addOrderItem()" class="w-full py-3 rounded-xl font-600 text-gray-900 text-sm transition hover:brightness-95" style="background:#facc15;">Add to Order</button>
         </div>
        </div>
-      </div><!-- Order Items & Summary -->
+      </div>
       <div class="lg:col-span-2">
        <div class="card-shadow rounded-2xl p-6 bg-white">
         <h3 class="text-lg font-700 text-gray-800 mb-4">Order Items</h3>
@@ -317,7 +317,7 @@
         </div>
        </div>
       </div>
-     </div><!-- Orders History -->
+     </div>
      <div class="card-shadow rounded-2xl p-6 bg-white mt-6">
       <h3 class="text-lg font-700 text-gray-800 mb-4">Order History</h3>
       <div class="overflow-x-auto">
